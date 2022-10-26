@@ -147,6 +147,10 @@ struct ContentView: View {
                                 } else {
                                     totalNumber += item.buttonDisplayName
                                 }
+                                // 연산 시도
+                                if item == .calculation("=") {
+                                    
+                                }
                                 
                             } label: {
                                 Text(item.buttonDisplayName)
