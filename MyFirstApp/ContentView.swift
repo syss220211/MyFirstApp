@@ -182,6 +182,12 @@ struct ContentView: View {
     }
     
 }
+extension ContentView {
+    
+//    private func calculate(_ type: ButtonType) -> CGFloat {
+//
+//    }
+}
 
 func showZeroElement(item: ButtonType) -> CGFloat {
     
