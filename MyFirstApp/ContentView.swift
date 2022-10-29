@@ -114,7 +114,10 @@ enum ButtonType: Hashable {
 struct ContentView: View {
     
     @State private var totalNumber: String = "0"
-    var tempNumber: Int = 0
+    @State var tempNumber: Int = 0
+    @State var isFirstInput: Bool = true
+    
+    @State var operateType: ButtonType = .unit("C")
     
     private let buttonData: [[ButtonType]] = [
         [.unit("C"), .unit("+/-"), .unit("%"), .calculation("/")],
@@ -142,15 +145,7 @@ struct ContentView: View {
                     HStack {
                         ForEach(line, id: \.self) { item in
                             Button {
-                                if item == .unit("C") {
-                                    totalNumber = "0"
-                                } else {
-                                    totalNumber += item.buttonDisplayName
-                                }
-                                // 연산 시도
-                                if item == .calculation("=") {
-                                    
-                                }
+                                self.calculate(item)
                                 
                             } label: {
                                 Text(item.buttonDisplayName)
@@ -184,9 +179,49 @@ struct ContentView: View {
 }
 extension ContentView {
     
-//    private func calculate(_ type: ButtonType) -> CGFloat {
-//
-//    }
+    private func calculate(_ type: ButtonType) {
+        
+        if isFirstInput {
+            switch type {
+                
+            case .unit("C"): return totalNumber = "0"
+            case .number:
+                totalNumber += type.buttonDisplayName
+                self.isFirstInput = false
+                return
+            case .calculation: return self.isFirstInput = false
+            case .unit: return self.isFirstInput = false
+            }
+        }
+        
+        else {
+            
+            switch type {
+            case .unit("C"): return totalNumber = "0"
+            case .number:
+                totalNumber = ""
+                totalNumber += type.buttonDisplayName
+                return
+                
+            case .calculation("+"), .calculation("-"), .calculation("*"), .calculation("/"): do {
+                tempNumber = Int(totalNumber) ?? 0
+                self.operateType = type
+            }
+                
+            case .calculation("="): do {
+                switch self.operateType {
+                case .calculation("+"): return totalNumber = String((Int(totalNumber) ?? 0) + tempNumber)
+                case .calculation("-"): return totalNumber = String((Int(totalNumber) ?? 0) - tempNumber)
+                case .calculation("*"): return totalNumber = String((Int(totalNumber) ?? 0) * tempNumber)
+                case .calculation("/"): return totalNumber = String((Int(totalNumber) ?? 0) / tempNumber)
+                default: return
+                }
+            }
+                
+            default: return
+            }
+        }
+    }
 }
 
 func showZeroElement(item: ButtonType) -> CGFloat {
